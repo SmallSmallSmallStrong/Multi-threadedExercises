@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+</head>
+<body>
+<div id="app">
+    用户名 <input type="text" v-model="username"><br>
+    密码 <input type="text" v-model="pwd"><br>
+    <input type="submit" value="提交" @click="sub"><br>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.js"></script>
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            username: "admin",
+            pwd: "123"
+        },
+        methods: {
+            sub: function () {
+                var baseUrl = "http://192.168.0.113";
+                this.$http.post("http://192.168.0.113/login", {
+                        username: this.username,
+                        password: this.pwd
+                    },
+                    {
+                        emulateJSON: true,
+                    })
+                    .then(function (value) {
+                            if (value.body.code == 200) {
+                                console.log(value.body.data.token);
+                                this.$http.get(baseUrl + "/admin/user", {
+                                    headers: {
+                                        Authorization:"123"
+                                    },
+                                    emulateJSON: true
+                                }).then(
+                                    function (res) {
+                                        console.log(res);
+                                    }
+                                );
+                            }
+                        }
+                        , function (reason) {
+                            console.log(reason);
+                        });
+            }
+        }
+    });
+</script>
+</body>
+</html>
